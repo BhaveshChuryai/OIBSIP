@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BC Community — Build. Create. Dominate.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #060608;
+      --bg2:       #0c0c10;
+      --surface:   #111116;
+      --surface2:  #18181f;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+      --gold:      #f0c040;
+      --gold2:     #ffd97d;
+      --gold-dim:  rgba(240,192,64,0.15);
+      --cyan:      #00d4ff;
+      --red:       #ff3b3b;
+      --white:     #f0eee8;
+      --muted:     rgba(240,238,232,0.42);
+      --muted2:    rgba(240,238,232,0.65);
+      --font-head: 'Bebas Neue', sans-serif;
+      --font-body: 'Syne', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+      --gutter:    clamp(1.5rem, 5vw, 5rem);
+      --max:       1260px;
+      --radius:    4px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: clamp(15px, 1.1vw, 17px);
+      line-height: 1.65;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* NOISE */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+    .container { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(240,192,64,0.35);
+      padding: 0.3em 0.85em;
+      border-radius: var(--radius);
+      background: rgba(240,192,64,0.05);
+    }
+    .tag::before { content: '◆'; font-size: 0.5em; }
+
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(22px) saturate(180%);
+      background: rgba(6,6,8,0.8);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem var(--gutter);
+      max-width: var(--max);
+      margin-inline: auto;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .logo .bc {
+      color: var(--gold);
+      background: rgba(240,192,64,0.1);
+      border: 1px solid rgba(240,192,64,0.3);
+      padding: 0 0.35em;
+      border-radius: 3px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2.2rem;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width 0.25s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.65em 1.5em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-cta:hover {
+      background: var(--gold2);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(240,192,64,0.28);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ambient glow behind hero */
+    .hero-glow {
+      position: absolute;
+      top: 10%; right: 5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(240,192,64,0.09) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+    .hero-glow2 {
+      position: absolute;
+      bottom: 5%; left: -5%;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(0,212,255,0.05) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: pulseGlow 8s 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%,100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* diagonal grid line */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 5rem;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.7s ease both;
+    }
+    .eyebrow-line { width: 2rem; height: 1px; background: var(--gold); flex-shrink: 0; }
+
+    .hero-title {
+      font-family: var(--font-head);
+      font-size: clamp(4rem, 7.5vw, 7.8rem);
+      line-height: 0.9;
+      letter-spacing: 0.015em;
+      text-transform: uppercase;
+      animation: fadeUp 0.85s 0.08s ease both;
+    }
+    .hero-title .accent { color: var(--gold); display: block; }
+    .hero-title .outline {
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.35);
+      color: transparent;
+      display: block;
+    }
+
+    .hero-desc {
+      margin-top: 2rem;
+      color: var(--muted2);
+      max-width: 460px;
+      font-size: 1.02rem;
+      line-height: 1.75;
+      animation: fadeUp 1s 0.16s ease both;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      animation: fadeUp 1s 0.22s ease both;
+    }
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: var(--muted2);
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 100px;
+      padding: 0.35em 0.9em;
+    }
+
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 1s 0.28s ease both;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.83rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.9em 2.2em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .btn-primary:hover {
+      background: var(--gold2);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 44px rgba(240,192,64,0.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted2);
+      font-weight: 600;
+      font-size: 0.83rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.9em 2.2em;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--white); color: var(--white); }
+
+    .hero-trust {
+      margin-top: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      animation: fadeUp 1s 0.34s ease both;
+    }
+    .trust-sep { width: 1px; height: 28px; background: var(--border2); }
+    .trust-item { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); }
+    .trust-item strong { display: block; color: var(--white); font-family: var(--font-head); font-size: 1.3rem; letter-spacing: 0.04em; line-height: 1; margin-bottom: 0.1em; }
+
+    /* hero right card */
+    .hero-right { animation: fadeUp 1s 0.4s ease both; }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .stat-card-top {
+      padding: 1.2rem 1.8rem;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-card-top .dot-row { display: flex; gap: 0.4rem; }
+    .stat-card-top .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .stat-card-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+
+    .stat-card-body { padding: 2rem 1.8rem; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem 2rem;
+      margin-bottom: 1.8rem;
+    }
+    .stat-item .num {
+      font-family: var(--font-head);
+      font-size: 2.8rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-item .num small { font-size: 1.4rem; }
+    .stat-item .desc {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    .stat-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 1.5rem; }
+
+    .mini-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .mini-bar .bar-label { font-family: var(--font-mono); font-size: 0.67rem; color: var(--muted); width: 72px; flex-shrink: 0; }
+    .mini-bar .bar-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .mini-bar .bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); border-radius: 2px; animation: barGrow 1.6s 0.9s ease both; transform-origin: left; }
+    @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    .mini-bar .bar-pct { font-family: var(--font-mono); font-size: 0.67rem; color: var(--gold); width: 32px; text-align: right; flex-shrink: 0; }
+
+    /* TICKER */
+    .ticker {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.8rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+    .ticker::before, .ticker::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 80px;
+      z-index: 2;
+    }
+    .ticker::before { left: 0; background: linear-gradient(90deg, var(--surface), transparent); }
+    .ticker::after  { right: 0; background: linear-gradient(-90deg, var(--surface), transparent); }
+    .ticker-track { display: inline-flex; gap: 2.5rem; animation: ticker 30s linear infinite; }
+    .ticker-item { font-family: var(--font-head); font-size: 0.9rem; letter-spacing: 0.2em; color: var(--muted); }
+    .ticker-item .sep { color: var(--gold); margin-right: 1.5rem; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* SECTIONS */
+    .section { padding: 7rem 0; }
+    .section-header { margin-bottom: 4rem; }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(2.6rem, 4.5vw, 4.2rem);
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-top: 0.8rem;
+    }
+    .section-title .gold { color: var(--gold); }
+
+    /* ABOUT SECTION */
+    .about { background: var(--bg2); }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .about-visual {
+      position: relative;
+      height: 360px;
+    }
+    .about-block {
+      position: absolute;
+      border-radius: 6px;
+      border: 1px solid var(--border2);
+    }
+    .ab1 {
+      top: 0; left: 0;
+      width: 62%; height: 200px;
+      background: linear-gradient(135deg, var(--surface2), var(--surface));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ab1 span { font-family: var(--font-head); font-size: 5rem; color: var(--gold); opacity: 0.9; }
+    .ab2 {
+      top: 60px; right: 0;
+      width: 42%; height: 150px;
+      background: var(--surface);
+      padding: 1.2rem;
+    }
+    .ab2 .label { margin-bottom: 0.5rem; }
+    .ab2 .big { font-family: var(--font-head); font-size: 3rem; color: var(--white); line-height: 1; }
+    .ab3 {
+      bottom: 0; left: 10%;
+      width: 80%; height: 110px;
+      background: rgba(240,192,64,0.06);
+      border-color: rgba(240,192,64,0.2);
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .ab3 .quote-icon { font-family: var(--font-head); font-size: 4rem; color: var(--gold); line-height: 0.8; opacity: 0.4; }
+    .ab3 p { font-size: 0.82rem; color: var(--muted2); font-style: italic; line-height: 1.55; }
+
+    .about-points { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+    .about-point {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .point-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--gold);
+      background: rgba(240,192,64,0.08);
+      border: 1px solid rgba(240,192,64,0.2);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .point-content h4 { font-weight: 800; font-size: 0.92rem; margin-bottom: 0.25rem; }
+    .point-content p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+    /* FEATURES */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .feature-card {
+      background: var(--bg);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .feature-card:hover { background: var(--surface); }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .feature-card:hover::after { transform: scaleX(1); }
+    .feature-num {
+      position: absolute;
+      top: 1.5rem; right: 1.8rem;
+      font-family: var(--font-head);
+      font-size: 3rem;
+      color: rgba(255,255,255,0.035);
+      line-height: 1;
+    }
+    .feature-icon {
+      width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      margin-bottom: 1.4rem;
+      font-size: 1.3rem;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .feature-card:hover .feature-icon {
+      border-color: var(--gold);
+      background: rgba(240,192,64,0.07);
+    }
+    .feature-title { font-weight: 800; font-size: 1rem; letter-spacing: 0.03em; margin-bottom: 0.6rem; }
+    .feature-desc { color: var(--muted); font-size: 0.86rem; line-height: 1.72; }
+
+    /* HOW IT WORKS */
+    .how { background: var(--bg2); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 23px; left: 12%;
+      width: 76%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border2) 20%, var(--border2) 80%, transparent);
+    }
+    .step { padding: 0 1.2rem; text-align: center; position: relative; z-index: 1; }
+    .step-num-wrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+    .step-num {
+      width: 46px; height: 46px;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--gold);
+      transition: all 0.25s;
+    }
+    .step:hover .step-num { background: var(--gold); color: #000; border-color: var(--gold); }
+    .step-title { font-weight: 800; font-size: 0.93rem; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+    .step-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.7; }
+
+    /* HIGHLIGHT BANNER */
+    .highlight {
+      background: var(--gold);
+      padding: 5rem var(--gutter);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .highlight::before {
+      content: 'BC';
+      position: absolute;
+      top: -3rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-head);
+      font-size: 24rem;
+      color: rgba(0,0,0,0.05);
+      line-height: 1;
+      letter-spacing: -0.05em;
+      pointer-events: none;
+    }
+    .highlight-text {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4.2vw, 3.8rem);
+      color: #000;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      max-width: 860px;
+      margin-inline: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .highlight-sub {
+      margin-top: 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      color: rgba(0,0,0,0.5);
+      position: relative; z-index: 1;
+    }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .price-card:hover { border-color: rgba(240,192,64,0.4); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .price-card.featured { border-color: var(--gold); background: linear-gradient(160deg, var(--surface), rgba(240,192,64,0.05)); }
+    .price-card.featured::before {
+      content: 'POPULAR';
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      font-family: var(--font-mono); font-size: 0.58rem;
+      letter-spacing: 0.15em; background: var(--gold); color: #000;
+      padding: 0.3em 0.75em; border-radius: 2px;
+    }
+    .price-name { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+    .price-amount { font-family: var(--font-head); font-size: 3.6rem; color: var(--white); line-height: 1; }
+    .price-amount sup { font-size: 1.4rem; vertical-align: super; }
+    .price-amount sub { font-size: 0.95rem; color: var(--muted); }
+    .price-features { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 0.7rem; }
+    .price-features li { font-size: 0.86rem; color: var(--muted); display: flex; gap: 0.7rem; align-items: flex-start; }
+    .price-features li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+    /* TESTIMONIALS */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .testimonial {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      display: flex; flex-direction: column; gap: 1.2rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .testimonial:hover { border-color: rgba(240,192,64,0.25); transform: translateY(-3px); }
+    .stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.1em; }
+    .testimonial-text { font-size: 0.88rem; color: var(--muted2); line-height: 1.78; flex: 1; }
+    .testimonial-author { display: flex; align-items: center; gap: 0.9rem; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #c07800);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.78rem; color: #000; flex-shrink: 0;
+    }
+    .author-name { font-weight: 700; font-size: 0.86rem; }
+    .author-role { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); }
+
+    /* CTA */
+    .cta-section {
+      padding: 9rem var(--gutter);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 65% at 50% 50%, rgba(240,192,64,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-title {
+      font-family: var(--font-head);
+      font-size: clamp(3.2rem, 6.5vw, 6.8rem);
+      line-height: 0.93;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      max-width: 800px;
+      margin-inline: auto;
+    }
+    .cta-title .gold { color: var(--gold); }
+    .cta-title .outline { -webkit-text-stroke: 1.5px rgba(255,255,255,0.3); color: transparent; }
+    .cta-sub { color: var(--muted2); max-width: 420px; margin: 1.5rem auto 2.5rem; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 3.5rem var(--gutter); }
+    .footer-inner {
+      max-width: var(--max); margin-inline: auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+    .footer-brand .logo { display: inline-block; margin-bottom: 0.8rem; }
+    .footer-brand p { color: var(--muted); font-size: 0.84rem; max-width: 260px; line-height: 1.7; }
+    .footer-col-title { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.2rem; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-bottom {
+      max-width: var(--max); margin-inline: auto;
+      padding-top: 2rem; margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-bottom p { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted); }
+    .social-row { display: flex; gap: 0.8rem; }
+    .social-btn {
+      width: 32px; height: 32px;
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .social-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(240,192,64,0.06); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .steps::before { display: none; }
+      .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .about-inner { grid-template-columns: 1fr; }
+      .about-visual { display: none; }
+    }
+    @media (max-width: 620px) {
+      .nav-links { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a href="#" class="logo"><span class="bc">BC</span> COMMUNITY</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">Process</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+      </ul>
+      <a href="#cta" class="nav-cta">Join Now →</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="hero-eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="tag">v2.0 — Now Live</span>
+          </div>
+          <h1 class="hero-title">
+            Build.<br>
+            <span class="outline">Create.</span><br>
+            <span class="accent">Dominate.</span>
+          </h1>
+          <p class="hero-desc">
+            BC Community gives you the tools, systems, and mental framework to operate at your absolute ceiling. A curated space built for people who refuse to plateau.
+          </p>
+          <div class="hero-pills">
+            <span class="pill">Deep Focus</span>
+            <span class="pill">Peak Performance</span>
+            <span class="pill">Real Community</span>
+            <span class="pill">No Fluff</span>
+          </div>
+          <div class="hero-actions">
+            <a href="#cta" class="btn-primary">Join the Community →</a>
+            <a href="#how" class="btn-ghost">See How It Works</a>
+          </div>
+          <div class="hero-trust">
+            <div class="trust-item"><strong>48k+</strong>Active Members</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><strong>9.4x</strong>Output Lift</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><strong>4.9★</strong>Avg. Rating</div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="dot-row"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+              <span class="stat-card-label">BC — Live Dashboard</span>
+              <span class="stat-card-label" style="color:var(--gold)">● LIVE</span>
+            </div>
+            <div class="stat-card-body">
+              <div class="stat-grid">
+                <div class="stat-item"><div class="num">48<small>k+</small></div><div class="desc">Members</div></div>
+                <div class="stat-item"><div class="num">9.4<small>x</small></div><div class="desc">Output Lift</div></div>
+                <div class="stat-item"><div class="num">99<small>%</small></div><div class="desc">Uptime SLA</div></div>
+                <div class="stat-item"><div class="num">4.9<small>★</small></div><div class="desc">User Rating</div></div>
+              </div>
+              <hr class="stat-divider"/>
+              <div class="label" style="margin-bottom:1rem;">Community Performance Index</div>
+              <div class="mini-bar">
+                <span class="bar-label">Focus</span>
+                <div class="bar-track"><div class="bar-fill" style="width:92%"></div></div>
+                <span class="bar-pct">92%</span>
+              </div>
+              <div class="mini-bar">
+                <span class="bar-label">Output</span>
+                <div class="bar-track"><div class="bar-fill" style="width:87%"></div></div>
+                <span class="bar-pct">87%</span>
+              </div>
+              <div class="mini-bar">
+                <span class="bar-label">Clarity</span>
+                <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
+                <span class="bar-pct">95%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-track" aria-hidden="true">
+      <span class="ticker-item"><span class="sep">◆</span>BUILD SOMETHING REAL</span>
+      <span class="ticker-item"><span class="sep">◆</span>PEAK PERFORMANCE</span>
+      <span class="ticker-item"><span class="sep">◆</span>COMMUNITY FIRST</span>
+      <span class="ticker-item"><span class="sep">◆</span>OPERATE AT MAX</span>
+      <span class="ticker-item"><span class="sep">◆</span>NO LIMITS FRAMEWORK</span>
+      <span class="ticker-item"><span class="sep">◆</span>BC MODE ACTIVATED</span>
+      <span class="ticker-item"><span class="sep">◆</span>BUILD SOMETHING REAL</span>
+      <span class="ticker-item"><span class="sep">◆</span>PEAK PERFORMANCE</span>
+      <span class="ticker-item"><span class="sep">◆</span>COMMUNITY FIRST</span>
+      <span class="ticker-item"><span class="sep">◆</span>OPERATE AT MAX</span>
+      <span class="ticker-item"><span class="sep">◆</span>NO LIMITS FRAMEWORK</span>
+      <span class="ticker-item"><span class="sep">◆</span>BC MODE ACTIVATED</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="about-inner">
+        <div>
+          <div class="section-header reveal">
+            <span class="tag">Who We Are</span>
+            <h2 class="section-title">More than a tool.<br>A <span class="gold">community.</span></h2>
+          </div>
+          <p class="reveal" style="color:var(--muted2);font-size:1rem;line-height:1.8;margin-bottom:1.5rem;">
+            BC Community is a high-performance ecosystem designed around one belief — that most people are operating far below their actual capacity. We exist to close that gap.
+          </p>
+          <div class="about-points reveal">
+            <div class="about-point">
+              <div class="point-num">01</div>
+              <div class="point-content">
+                <h4>Curated, Not Crowded</h4>
+                <p>Every resource, framework, and system is handpicked. No noise, no filler — only what actually moves the needle.</p>
+              </div>
+            </div>
+            <div class="about-point">
+              <div class="point-num">02</div>
+              <div class="point-content">
+                <h4>Built by Builders</h4>
+                <p>Created by practitioners who've been in the trenches — not theorists. Every tool solves a real problem.</p>
+              </div>
+            </div>
+            <div class="about-point">
+              <div class="point-num">03</div>
+              <div class="point-content">
+                <h4>Compound by Design</h4>
+                <p>The system is structured so every week builds on the last. Small consistent wins stack into massive results.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-right reveal">
+          <div class="about-visual">
+            <div class="about-block ab1"><span>BC</span></div>
+            <div class="about-block ab2">
+              <div class="label">Community Growth</div>
+              <div class="big">48k+</div>
+            </div>
+            <div class="about-block ab3">
+              <div class="quote-icon">"</div>
+              <p>Most people are operating at 40% of their capacity. BC Community is the other 60%.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">What You Get</span>
+        <h2 class="section-title">Everything you need<br>to operate <span class="gold">differently.</span></h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <span class="feature-num">01</span>
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Velocity Engine</h3>
+          <p class="feature-desc">A task-execution system that eliminates friction from your workflow. Move faster without burning out. Built for sustained output.</p>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-num">02</span>
+          <div class="feature-icon">🧠</div>
+          <h3 class="feature-title">Cognitive Stack</h3>
+          <p class="feature-desc">Mental models, decision frameworks, and focus protocols drawn from the world's highest performers — ready to install.</p>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-num">03</span>
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Live Analytics</h3>
+          <p class="feature-desc">Track your output, energy cycles, and deep work streaks in real time. See exactly where your hours go and fix it fast.</p>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-num">04</span>
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">Goal Architecture</h3>
+          <p class="feature-desc">Break ambitious 10-year visions into daily executable actions. A structured system that makes big goals feel inevitable.</p>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-num">05</span>
+          <div class="feature-icon">🔗</div>
+          <h3 class="feature-title">Integration Hub</h3>
+          <p class="feature-desc">Connect Notion, Linear, Slack, Gmail, and 60+ tools. Your entire stack runs from one command center, finally.</p>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-num">06</span>
+          <div class="feature-icon">🛡️</div>
+          <h3 class="feature-title">Resilience Protocol</h3>
+          <p class="feature-desc">Stress inoculation and recovery routines that keep you at peak even under pressure. Perform when it matters most.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section how" id="how">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">The Process</span>
+        <h2 class="section-title">Up and running<br>in <span class="gold">4 steps.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num-wrap"><div class="step-num">01</div></div>
+          <h3 class="step-title">Baseline Audit</h3>
+          <p class="step-desc">We map your current performance, habits, and blockers using a 12-point diagnostic. Brutal honesty, zero fluff.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-num-wrap"><div class="step-num">02</div></div>
+          <h3 class="step-title">System Build</h3>
+          <p class="step-desc">A personalized operating system assembled around your goals, schedule, and cognitive style. Yours alone.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-num-wrap"><div class="step-num">03</div></div>
+          <h3 class="step-title">Activate</h3>
+          <p class="step-desc">Deploy your stack, integrate your tools, and start running protocols from day one with guided onboarding.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-num-wrap"><div class="step-num">04</div></div>
+          <h3 class="step-title">Iterate</h3>
+          <p class="step-desc">Weekly reviews, AI insights, and live coaching keep your system sharp and compounding week over week.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HIGHLIGHT BANNER -->
+  <div class="highlight">
+    <p class="highlight-text">
+      "Most people are operating at 40% of their capacity.<br>BC Community is the other 60%."
+    </p>
+    <p class="highlight-sub">— Internal performance data across 48,000+ members</p>
+  </div>
+
+  <!-- PRICING -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">Pricing</span>
+        <h2 class="section-title">Simple.<br><span class="gold">Transparent.</span></h2>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card reveal">
+          <p class="price-name">Starter</p>
+          <div class="price-amount"><sup>$</sup>0<sub>/mo</sub></div>
+          <ul class="price-features">
+            <li>Core velocity protocols</li>
+            <li>Basic analytics dashboard</li>
+            <li>3 tool integrations</li>
+            <li>Community access</li>
+          </ul>
+          <a href="#" class="btn-ghost" style="text-align:center">Get Started Free</a>
+        </div>
+        <div class="price-card featured reveal">
+          <p class="price-name">Pro</p>
+          <div class="price-amount"><sup>$</sup>49<sub>/mo</sub></div>
+          <ul class="price-features">
+            <li>Full cognitive stack library</li>
+            <li>Live performance analytics</li>
+            <li>Unlimited integrations</li>
+            <li>Weekly AI-powered reviews</li>
+            <li>Goal architecture module</li>
+          </ul>
+          <a href="#" class="btn-primary" style="text-align:center">Activate Pro →</a>
+        </div>
+        <div class="price-card reveal">
+          <p class="price-name">Elite</p>
+          <div class="price-amount"><sup>$</sup>149<sub>/mo</sub></div>
+          <ul class="price-features">
+            <li>Everything in Pro</li>
+            <li>1-on-1 coaching sessions</li>
+            <li>Custom system design</li>
+            <li>Priority support 24/7</li>
+            <li>Early access to new modules</li>
+          </ul>
+          <a href="#" class="btn-ghost" style="text-align:center">Go Elite</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section" id="testimonials" style="background:var(--bg2)">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">Social Proof</span>
+        <h2 class="section-title">Real results.<br><span class="gold">Real people.</span></h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial reveal">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"I went from 14-hour days with mediocre output to hitting my targets in 7 hours with energy to spare. The cognitive stack changed everything."</p>
+          <div class="testimonial-author">
+            <div class="avatar">RS</div>
+            <div><div class="author-name">Rahul Sharma</div><div class="author-role">Founder, DevScale</div></div>
+          </div>
+        </div>
+        <div class="testimonial reveal">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"The analytics alone were worth the subscription. Seeing exactly where my deep work was leaking made me uncomfortable — and then unstoppable."</p>
+          <div class="testimonial-author">
+            <div class="avatar">AP</div>
+            <div><div class="author-name">Ananya Patel</div><div class="author-role">Product Manager, TechScale</div></div>
+          </div>
+        </div>
+        <div class="testimonial reveal">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"Three months in, I've shipped more than in the previous year. Not an exaggeration. The goal architecture module is an absolute weapon."</p>
+          <div class="testimonial-author">
+            <div class="avatar">KM</div>
+            <div><div class="author-name">Kiran Mehta</div><div class="author-role">Indie Developer</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="cta">
+    <div class="container" style="position:relative;z-index:1;">
+      <p class="label" style="margin-bottom:1.2rem;">Ready to level up?</p>
+      <h2 class="cta-title">
+        <span class="outline">Stop</span><br>
+        <span class="gold">Limiting</span><br>
+        Yourself.
+      </h2>
+      <p class="cta-sub">Join 48,000+ members who chose to operate at their absolute best. Your ceiling is further than you think.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="#pricing" class="btn-primary" style="font-size:1rem;padding:1em 2.8em;">Join BC Community →</a>
+        <a href="#features" class="btn-ghost" style="font-size:1rem;padding:1em 2.8em;">Explore Features</a>
+      </div>
+      <p style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);">No credit card required &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; 14-day free trial</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo" style="font-size:1.3rem;margin-bottom:0.8rem;"><span class="bc">BC</span> COMMUNITY</a>
+        <p>Built for those who refuse to operate below their potential. Every tool, every system — designed around peak performance.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Product</p>
+        <ul class="footer-links">
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Company</p>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Legal</p>
+        <ul class="footer-links">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 BC Community. All rights reserved.</p>
+      <div class="social-row">
+        <a href="#" class="social-btn" aria-label="Twitter">𝕏</a>
+        <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+        <a href="#" class="social-btn" aria-label="GitHub">⌥</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    document.querySelectorAll('.features-grid, .pricing-grid, .testimonials-grid, .steps').forEach(grid => {
+      [...grid.children].forEach((child, i) => {
+        child.style.transitionDelay = `${i * 0.08}s`;
+      });
+    });
+  </script>
+</body>
+</html>
