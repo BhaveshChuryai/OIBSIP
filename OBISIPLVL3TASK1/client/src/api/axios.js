@@ -1,0 +1,61 @@
+/**
+ * Axios Instance
+ * Configured with base URL, auth interceptors, and token refresh logic.
+ */
+import axios from 'axios';
+
+const API = axios.create({
+  baseURL: '/api',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Request interceptor — attach access token
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor — handle token expiry + auto-refresh
+API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If token expired and we haven't retried yet
+    if (error.response?.status === 401 && error.response?.data?.expired && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) {
+          throw new Error('No refresh token');
+        }
+
+        const { data } = await axios.post('/api/auth/refresh-token', { refreshToken });
+
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+
+        // Retry original request with new token
+        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        return API(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed — force logout
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default API;

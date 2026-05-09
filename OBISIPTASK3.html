@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temperature Converter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius-sm: 0.375rem; --radius-md: 0.5rem;
+  --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* LIGHT MODE */
+:root, [data-theme="light"] {
+  --color-bg: #f0f4ff;
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f9ff;
+  --color-surface-offset: #eef1fa;
+  --color-border: rgba(99, 102, 241, 0.15);
+  --color-divider: rgba(99, 102, 241, 0.08);
+  --color-text: #0f0e1a;
+  --color-text-muted: #6b6980;
+  --color-text-faint: #a8a7be;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #3730a3;
+  --color-primary-active: #1e1b6e;
+  --color-primary-glow: rgba(79, 70, 229, 0.25);
+  --color-secondary: #7c3aed;
+  --color-accent: #06b6d4;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --shadow-sm: 0 1px 3px rgba(79, 70, 229, 0.08);
+  --shadow-md: 0 4px 16px rgba(79, 70, 229, 0.12);
+  --shadow-lg: 0 12px 40px rgba(79, 70, 229, 0.18);
+  --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.15);
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  --color-bg: #080812;
+  --color-surface: #0f0e1e;
+  --color-surface-2: #14132a;
+  --color-surface-offset: #1a1932;
+  --color-border: rgba(139, 92, 246, 0.2);
+  --color-divider: rgba(139, 92, 246, 0.08);
+  --color-text: #e8e7ff;
+  --color-text-muted: #9492b8;
+  --color-text-faint: #5a5878;
+  --color-primary: #818cf8;
+  --color-primary-hover: #a5b4fc;
+  --color-primary-active: #c7d2fe;
+  --color-primary-glow: rgba(129, 140, 248, 0.3);
+  --color-secondary: #a78bfa;
+  --color-accent: #22d3ee;
+  --color-success: #34d399;
+  --color-error: #f87171;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.5);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 60px rgba(129, 140, 248, 0.12);
+}
+
+/* ===== BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body {
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  position: relative;
+  overflow-x: hidden;
+}
+input, button, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+
+/* ===== AMBIENT BG ===== */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, var(--color-primary-glow), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124, 58, 237, 0.12), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6, 182, 212, 0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 40px; height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted);
+  box-shadow: var(--shadow-sm);
+  z-index: 100;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.theme-toggle:hover {
+  color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== MAIN CARD ===== */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-8);
+  box-shadow: var(--shadow-glow), var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* glowing card top border */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-secondary), transparent);
+  opacity: 0.6;
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.logo-icon {
+  width: 40px; height: 40px;
+}
+
+.app-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.app-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* ===== FORM ===== */
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+
+/* Input with unit badge */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.temp-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--space-10) 0 var(--space-4);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-lg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  -moz-appearance: textfield;
+}
+.temp-input::-webkit-outer-spin-button,
+.temp-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.temp-input::placeholder { color: var(--color-text-faint); font-weight: 400; }
+.temp-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-glow);
+  background: var(--color-surface);
+}
+.temp-input.error {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.input-suffix {
+  position: absolute;
+  right: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  pointer-events: none;
+  transition: color var(--transition);
+}
+
+.error-msg {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  margin-top: var(--space-2);
+  display: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+.error-msg.visible { display: flex; }
+
+/* ===== UNIT SELECTOR ===== */
+.unit-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.unit-btn {
+  position: relative;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all var(--transition);
+  overflow: hidden;
+}
+.unit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.unit-btn span { position: relative; z-index: 1; }
+.unit-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+.unit-btn.active {
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.unit-btn.active::before { opacity: 1; }
+
+/* ===== CONVERT BTN ===== */
+.convert-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #fff;
+  font-size: var(--text-base);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--space-6);
+  transition: transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 20px var(--color-primary-glow);
+}
+.convert-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.convert-btn span { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: var(--space-2); }
+.convert-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px var(--color-primary-glow); }
+.convert-btn:hover::before { opacity: 1; }
+.convert-btn:active { transform: translateY(0); }
+
+/* ===== RESULT AREA ===== */
+.result-area {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+
+.result-area.has-result {
+  border-color: var(--color-primary);
+}
+
+.result-area::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.result-area.has-result::before { transform: scaleX(1); }
+
+.result-placeholder {
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.result-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.result-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  display: none;
+  animation: countUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-formula {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  display: none;
+}
+
+.result-all {
+  margin-top: var(--space-4);
+  display: none;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.mini-result {
+  flex: 1;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+.mini-result-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.mini-result-val {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+  height: 1px;
+  background: var(--color-divider);
+  margin: var(--space-6) 0;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .card { padding: var(--space-6) var(--space-5); }
+}
+</style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" data-theme-toggle aria-label="Switch to light mode">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+  </svg>
+</button>
+
+<!-- CARD -->
+<div class="card" role="main">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <!-- SVG Logo: thermometer with gradient -->
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" aria-label="Thermo logo">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#818cf8"/>
+            <stop offset="50%" stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#22d3ee"/>
+          </linearGradient>
+          <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22d3ee"/>
+            <stop offset="100%" stop-color="#818cf8"/>
+          </linearGradient>
+        </defs>
+        <!-- thermometer body -->
+        <rect x="16" y="5" width="8" height="20" rx="4" fill="none" stroke="url(#lg1)" stroke-width="2"/>
+        <!-- mercury fill -->
+        <rect x="18.5" y="14" width="3" height="11" rx="1.5" fill="url(#lg2)"/>
+        <!-- bulb -->
+        <circle cx="20" cy="29" r="5" fill="none" stroke="url(#lg1)" stroke-width="2"/>
+        <circle cx="20" cy="29" r="3" fill="url(#lg2)"/>
+        <!-- ticks -->
+        <line x1="24" y1="11" x2="27" y2="11" stroke="url(#lg1)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="24" y1="16" x2="26" y2="16" stroke="url(#lg1)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="24" y1="21" x2="27" y2="21" stroke="url(#lg1)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="app-title">ThermoConvert</h1>
+    <p class="app-subtitle">Celsius · Fahrenheit · Kelvin</p>
+  </div>
+
+  <!-- INPUT -->
+  <div class="form-group">
+    <label class="form-label" for="tempInput">Temperature Value</label>
+    <div class="input-wrapper">
+      <input
+        id="tempInput"
+        class="temp-input"
+        type="number"
+        placeholder="Enter temperature…"
+        step="any"
+        aria-describedby="inputError"
+        autocomplete="off"
+      >
+      <span class="input-suffix" id="inputSuffix">°C</span>
+    </div>
+    <div class="error-msg" id="inputError" role="alert" aria-live="polite">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Please enter a valid number.
+    </div>
+  </div>
+
+  <!-- UNIT SELECTOR -->
+  <div class="form-group">
+    <label class="form-label">Convert From</label>
+    <div class="unit-selector" role="group" aria-label="Choose input unit">
+      <button class="unit-btn active" data-unit="C" aria-pressed="true"><span>°C Celsius</span></button>
+      <button class="unit-btn" data-unit="F" aria-pressed="false"><span>°F Fahrenheit</span></button>
+      <button class="unit-btn" data-unit="K" aria-pressed="false"><span>K Kelvin</span></button>
+    </div>
+  </div>
+
+  <!-- CONVERT BUTTON -->
+  <button class="convert-btn" id="convertBtn" aria-label="Convert temperature">
+    <span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+      Convert
+    </span>
+  </button>
+
+  <!-- RESULT AREA -->
+  <div class="result-area" id="resultArea" aria-live="polite" aria-label="Conversion result">
+    <div class="result-placeholder" id="resultPlaceholder">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" opacity=".3"/><path d="M12 6v6l4 2"/></svg>
+      Result will appear here
+    </div>
+    <div class="result-label" id="resultLabel" style="display:none"></div>
+    <div class="result-value" id="resultValue"></div>
+    <div class="result-formula" id="resultFormula"></div>
+    <div class="result-all" id="resultAll">
+      <div class="mini-result" id="miniC">
+        <div class="mini-result-label">Celsius</div>
+        <div class="mini-result-val" id="miniCVal">—</div>
+      </div>
+      <div class="mini-result" id="miniF">
+        <div class="mini-result-label">Fahrenheit</div>
+        <div class="mini-result-val" id="miniFVal">—</div>
+      </div>
+      <div class="mini-result" id="miniK">
+        <div class="mini-result-label">Kelvin</div>
+        <div class="mini-result-val" id="miniKVal">—</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== THEME TOGGLE =====
+(function(){
+  const t = document.querySelector('[data-theme-toggle]');
+  const r = document.documentElement;
+  let d = r.getAttribute('data-theme') || 'dark';
+
+  function updateToggle(mode) {
+    t.innerHTML = mode === 'dark'
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    t.setAttribute('aria-label', 'Switch to ' + (mode === 'dark' ? 'light' : 'dark') + ' mode');
+  }
+
+  updateToggle(d);
+
+  t.addEventListener('click', () => {
+    d = d === 'dark' ? 'light' : 'dark';
+    r.setAttribute('data-theme', d);
+    updateToggle(d);
+  });
+})();
+
+// ===== UNIT SELECTOR =====
+let selectedUnit = 'C';
+const unitBtns = document.querySelectorAll('.unit-btn');
+const inputSuffix = document.getElementById('inputSuffix');
+
+const unitSymbols = { C: '°C', F: '°F', K: 'K' };
+
+unitBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    unitBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    selectedUnit = btn.dataset.unit;
+    inputSuffix.textContent = unitSymbols[selectedUnit];
+    clearError();
+    // live convert if there's a value
+    const val = parseFloat(document.getElementById('tempInput').value);
+    if (!isNaN(val)) doConvert(val, selectedUnit);
+  });
+});
+
+// ===== VALIDATION & CONVERSION =====
+const input = document.getElementById('tempInput');
+const convertBtn = document.getElementById('convertBtn');
+const errorMsg = document.getElementById('inputError');
+const resultArea = document.getElementById('resultArea');
+const resultPlaceholder = document.getElementById('resultPlaceholder');
+const resultLabel = document.getElementById('resultLabel');
+const resultValue = document.getElementById('resultValue');
+const resultFormula = document.getElementById('resultFormula');
+const resultAll = document.getElementById('resultAll');
+
+function clearError() {
+  input.classList.remove('error');
+  errorMsg.classList.remove('visible');
+}
+
+function showError() {
+  input.classList.add('error');
+  errorMsg.classList.add('visible');
+}
+
+function fmt(n) {
+  return parseFloat(n.toFixed(4)).toString();
+}
+
+const formulas = {
+  C: { F: v => `(${fmt(v)} × 9/5) + 32`, K: v => `${fmt(v)} + 273.15` },
+  F: { C: v => `(${fmt(v)} − 32) × 5/9`, K: v => `(${fmt(v)} − 32) × 5/9 + 273.15` },
+  K: { C: v => `${fmt(v)} − 273.15`,      F: v => `(${fmt(v)} − 273.15) × 9/5 + 32` }
+};
+
+const targetUnit = { C: 'F', F: 'C', K: 'C' };
+
+function convert(value, from) {
+  const tC = (v, f) => f === 'C' ? v : f === 'F' ? (v - 32) * 5/9 : v - 273.15;
+  const celsius = tC(value, from);
+  return {
+    C: from === 'C' ? value : celsius,
+    F: from === 'F' ? value : celsius * 9/5 + 32,
+    K: from === 'K' ? value : celsius + 273.15
+  };
+}
+
+function doConvert(val, unit) {
+  const result = convert(val, unit);
+  const to = targetUnit[unit];
+  const toVal = result[to];
+
+  resultPlaceholder.style.display = 'none';
+  resultLabel.style.display = 'block';
+  resultLabel.textContent = `${unitSymbols[unit]} → ${unitSymbols[to]}`;
+  
+  resultValue.style.display = 'block';
+  resultValue.textContent = `${fmt(toVal)} ${unitSymbols[to]}`;
+  // re-trigger animation
+  resultValue.style.animation = 'none';
+  void resultValue.offsetWidth;
+  resultValue.style.animation = '';
+
+  const fkeys = Object.keys(formulas[unit]);
+  const fkey = fkeys[0]; // primary formula
+  resultFormula.style.display = 'block';
+  resultFormula.textContent = `= ${formulas[unit][to] ? formulas[unit][to](val) : ''}`;
+
+  // mini results for all 3 units
+  resultAll.style.display = 'flex';
+  document.getElementById('miniCVal').textContent = from === 'C' 
+    ? `${fmt(val)} °C` : `${fmt(result.C)} °C`;
+  document.getElementById('miniFVal').textContent = from === 'F'
+    ? `${fmt(val)} °F` : `${fmt(result.F)} °F`;
+  document.getElementById('miniKVal').textContent = from === 'K'
+    ? `${fmt(val)} K` : `${fmt(result.K)} K`;
+
+  // highlight current input unit
+  ['C','F','K'].forEach(u => {
+    document.getElementById('mini'+u).style.opacity = u === unit ? '0.5' : '1';
+  });
+
+  resultArea.classList.add('has-result');
+}
+
+// FIX: use a local variable for the 'from' check
+function doConvertFixed(val, unit) {
+  const result = convert(val, unit);
+  const to = targetUnit[unit];
+  const toVal = result[to];
+
+  resultPlaceholder.style.display = 'none';
+  resultLabel.style.display = 'block';
+  resultLabel.textContent = `${unitSymbols[unit]} → ${unitSymbols[to]}`;
+  
+  resultValue.style.display = 'block';
+  resultValue.textContent = `${fmt(toVal)} ${unitSymbols[to]}`;
+  resultValue.style.animation = 'none';
+  void resultValue.offsetWidth;
+  resultValue.style.animation = '';
+
+  const formulaStr = formulas[unit][to] ? formulas[unit][to](val) : '';
+  resultFormula.style.display = 'block';
+  resultFormula.textContent = formulaStr ? `= ${formulaStr}` : '';
+
+  resultAll.style.display = 'flex';
+  document.getElementById('miniCVal').textContent = `${fmt(result.C)} °C`;
+  document.getElementById('miniFVal').textContent = `${fmt(result.F)} °F`;
+  document.getElementById('miniKVal').textContent = `${fmt(result.K)} K`;
+
+  ['C','F','K'].forEach(u => {
+    document.getElementById('mini'+u).style.opacity = u === unit ? '0.45' : '1';
+  });
+
+  resultArea.classList.add('has-result');
+}
+
+convertBtn.addEventListener('click', () => {
+  const raw = input.value.trim();
+  if (raw === '' || isNaN(Number(raw))) {
+    showError();
+    input.focus();
+    return;
+  }
+  clearError();
+  doConvertFixed(parseFloat(raw), selectedUnit);
+});
+
+input.addEventListener('input', clearError);
+
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') convertBtn.click();
+});
+</script>
+</body>
+</html>
