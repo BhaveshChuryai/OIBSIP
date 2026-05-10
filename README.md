@@ -16,21 +16,27 @@ Projects
 Task 1 — Landing Page
 Level 1 | HTML5 · CSS3
 A fully responsive landing page built from scratch. Includes a navigation bar, hero section, feature highlight cards, and a footer — all styled with clean, modern aesthetics. Focused on layout structure, visual hierarchy, and responsive design without any frameworks or libraries.
+
 Task 2 — Personal Portfolio Website
 Level 1 | HTML5 · CSS3
 A multi-section personal website showcasing skills, projects, education, and contact information. Features smooth scroll navigation, styled skill bars, and project cards — designed with a clean, minimal aesthetic while balancing visual appeal with usability.
+
 Task 3 — Temperature Converter
 Level 1 | HTML5 · CSS3 · JavaScript
 A real-time temperature converter supporting Celsius, Fahrenheit, and Kelvin. Conversion logic triggers live as the user types — no button required. Includes input validation for empty fields and non-numeric input, with a focus on DOM interaction fundamentals.
+
 Task 4 — Calculator App
 Level 2 | HTML5 · CSS3 · JavaScript
 A fully functional browser-based calculator supporting all standard arithmetic operations. Features a grid-based button layout, live expression display, keyboard support, and error handling for edge cases like division by zero. Built to reinforce event-driven programming and clean state management.
+
 Task 5 — Tribute Page
 Level 2 | HTML5 · CSS3
 A beautifully styled tribute webpage honoring a notable personality. Includes a hero section with portrait and quote, a biography timeline, and content cards — designed with an emphasis on typography, visual composition, and emotional storytelling through layout.
+
 Task 6 — Todo Web App
 Level 2 | HTML5 · CSS3 · JavaScript
 A complete task management application with add, edit, complete, and delete functionality. Features All / Active / Completed filters, a live task counter, smooth CSS animations, and localStorage persistence so tasks survive page refreshes. A practical introduction to front-end state management.
+
 Task 7 — Login Authentication Page
 Level 3 | HTML5 · CSS3 · JavaScript
 A polished Login & Sign-Up UI with full client-side form validation. Features a toggle between Login and Registration forms, real-time validation for email format, password length, and password match, instant error/success feedback, a password visibility toggle, and smooth CSS transition animations.
